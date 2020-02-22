@@ -40,7 +40,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib) 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib) 
 
-set(LUA_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../modules/src/LuaJIT/src)
+set(LUA_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/modules/src/LuaJIT/src)
 set(CMAKE_PROGRAM_PATH ${LUA_INCLUDE_DIR})
 
 if (APPLE)
@@ -51,7 +51,7 @@ elseif (WIN32)
 	set(LUA_LIBRARIES ${LUA_INCLUDE_DIR}/lua51.lib)
 endif()
 
-set(QT_SCHEMA_DIR ${CMAKE_BINARY_DIR}/../generator/schema)
+set(QT_SCHEMA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/generator/schema)
 
 find_package(Qt5 REQUIRED
 	Core
@@ -134,7 +134,7 @@ function(build_qt_lib_binding BINDING_HEADER)
 	string(TOLOWER ${BINDING_HEADER} BINDING_NAME)
 
 	# hardcoded in generator.lua
-	set (LQT_GEN_DIR ${CMAKE_BINARY_DIR}/${BINDING_NAME}_src)
+	set (LQT_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/${BINDING_NAME}_src)
 	file(MAKE_DIRECTORY ${LQT_GEN_DIR})
 
 	set (BINDING_SRC ${LQT_GEN_DIR}/${BINDING_NAME}_merged_build.cpp)
@@ -172,19 +172,19 @@ function(build_qt_lib_binding BINDING_HEADER)
 
 		add_custom_target(generate_${BINDING_NAME}_cpp
 							COMMAND ${LUA_CMD}
-								"${CMAKE_SOURCE_DIR}/generator/generator.lua" 
+								"${CMAKE_CURRENT_SOURCE_DIR}/generator/generator.lua" 
 								${GEN_XML}
 								${EXTRA_LUA_OPTIONS}
 								-i ${BINDING_HEADER} -i lqt_qt.hpp 
 								-i "${QT_LIBRARIES}"
 								-n ${BINDING_NAME} 
-								-t ${CMAKE_SOURCE_DIR}/generator/qtypes.lua
+								-t ${CMAKE_CURRENT_SOURCE_DIR}/generator/qtypes.lua
 								${${BINDING_NAME}_TYPES}
-								-f ${CMAKE_SOURCE_DIR}/generator/qt_internal.lua
+								-f ${CMAKE_CURRENT_SOURCE_DIR}/generator/qt_internal.lua
 							COMMENT "Generating binding code with Lua"
 							VERBATIM)
 	else()
-		add_custom_target(generate_${BINDING_NAME}_xml 	COMMAND
+		add_custom_target(generate_${BINDING_NAME}_xml COMMAND
 							COMMENT "Reusing old XML on ${BINDING_NAME} "
 							VERBATIM)
 		add_custom_target(generate_${BINDING_NAME}_cpp
@@ -193,9 +193,9 @@ function(build_qt_lib_binding BINDING_HEADER)
 	endif()
 
 	set(COMMON COMMON_${BINDING_NAME})
-	file(GLOB ${COMMON}_SRC ${CMAKE_SOURCE_DIR}/common/*.cpp)
-	file(GLOB ${COMMON}_HPP ${CMAKE_SOURCE_DIR}/common/*.hpp)
-	file(GLOB ${COMMON}_HPP ${CMAKE_SOURCE_DIR}/common/*.inl)
+	file(GLOB ${COMMON}_SRC ${CMAKE_CURRENT_SOURCE_DIR}/common/*.cpp)
+	file(GLOB ${COMMON}_HPP ${CMAKE_CURRENT_SOURCE_DIR}/common/*.hpp)
+	file(GLOB ${COMMON}_HPP ${CMAKE_CURRENT_SOURCE_DIR}/common/*.inl)
 
 	set(${BINDING_NAME}_GENERATED ${LQT_GEN_DIR}/${BINDING_NAME}_enum.cpp
 									${LQT_GEN_DIR}/${BINDING_NAME}_meta.cpp
@@ -218,7 +218,7 @@ function(build_qt_lib_binding BINDING_HEADER)
 
 	qt5_wrap_cpp(${COMMON}_MOC ${LQT_GEN_DIR}/${BINDING_NAME}_slot.hpp)
 
-	include_directories(${CMAKE_SOURCE_DIR}/common ${LUA_INCLUDE_DIR} ${QT_INCLUDES})
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common ${LUA_INCLUDE_DIR} ${QT_INCLUDES})
 
 	add_library(${BINDING_NAME} MODULE ${BINDING_SRC}
 											${${COMMON}_SRC}
