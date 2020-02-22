@@ -280,6 +280,9 @@ private:
 class Q_CORE_EXPORT QObjectUserData {
 public:
     virtual ~QObjectUserData();
+
+private:
+    Q_DISABLE_COPY(QObjectUserData)
 };
 // #endif
 
