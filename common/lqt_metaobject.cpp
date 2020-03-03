@@ -100,7 +100,7 @@ static QByteArrayData* lqlL_tostringdata (lua_State *L, int idx) {
 
     n = 0;
     size_t offset = data_size;
-    foreach(QString literal, literals) {
+    for(const QString& literal : literals) {
         QByteArray utf8 = literal.toUtf8();
         const char *s = utf8.constData();
         size_t sz = strlen(s);
