@@ -20,6 +20,13 @@ end
 function slots_for_signals()
 	for sig in pairs(signals) do
 		local args, comma = '(', ''
+
+		if #sig.arguments > 0 then
+			args = args .. "lua_State* L, "
+		else
+			args = args .. "lua_State* L"
+		end
+
 		for i, a in ipairs(sig.arguments) do
 			args = args .. comma .. a.xarg.type_name .. ' arg'..i
 			comma = ', '
@@ -59,10 +66,9 @@ end
 function print_slots(s)
 	print_slot_h'class LqtSlotAcceptor : public QObject {'
 	print_slot_h'  Q_OBJECT'
-	print_slot_h'  lua_State *L;'
 	print_slot_h'  public:'
-	print_slot_h('  LqtSlotAcceptor(lua_State *l, QObject *p=NULL) : QObject(p), L(l) { setObjectName("'..module_name..'"); lqtL_register(L, this, NULL); }')
-	print_slot_h'  virtual ~LqtSlotAcceptor() { lqtL_unregister(L, this, NULL); }'
+	print_slot_h('  LqtSlotAcceptor(QObject *p=NULL) : QObject(p) { setObjectName("'..module_name..'"); }')
+	print_slot_h'  virtual ~LqtSlotAcceptor() {}'
 	print_slot_h'  public slots:'
 	for p, b in pairs(s) do
 		print_slot_h('  '..p..';')

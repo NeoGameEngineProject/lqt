@@ -1270,7 +1270,7 @@ end
 		print_meta("\tlqtL_qvariant_custom_qtgui(L);")
 	end
 	print_meta('\tlqtL_register_super(L);')
-	print_meta('\tlqtSlotAcceptor_'..module_name..' = new LqtSlotAcceptor(L);')
+	print_meta('\tlqtSlotAcceptor_'..module_name..' = new LqtSlotAcceptor();')
 	print_meta('\tlua_settop(L, top);')
 	print_meta('\treturn 1;\n}')
 	if fmeta then fmeta:close() end
